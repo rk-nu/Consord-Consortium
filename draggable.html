@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Concord Consortium Draggable Canvas</title>
+    </head>
+    <body>
+
+        <div>
+            <canvas id="canvas" width="300" height="300">
+                Browser does not support Canvas feature.
+            </canvas>
+        </div>
+
+        <script type="text/javascript">
+
+            var canvas;
+            var ctx;
+            var x = 75;
+            var y = 50;
+            var WIDTH = 300;
+            var HEIGHT = 300;
+            var dragok = false;
+
+            init();
+            canvas.onmousedown = mouseDown;
+            canvas.onmouseup = mouseUp;
+            
+            function rect(x, y, w, h) {
+                ctx.beginPath();
+                ctx.rect(x, y, w, h);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            function init() {
+                canvas = document.getElementById("canvas");
+                ctx = canvas.getContext("2d");
+                return setInterval(draw, 10);
+            }
+
+            function draw() {
+                ctx.fillStyle = "#FFFFCC";
+                rect(0, 0, WIDTH, HEIGHT);
+                ctx.fillStyle = "#3333CC";
+                rect(x - 20, y - 20, 40, 40);
+            }
+
+            function mouseMove(e) {
+                x = e.pageX - canvas.offsetLeft + 20 ;
+                y = e.pageY - canvas.offsetTop + 20;
+                console.log("aft x "+ x);
+                console.log("aft y " + y);
+            }
+
+            function mouseDown(e) {
+                console.log("pagex " + e.pageX);
+                console.log("pagey " + e.pageY);
+                console.log("canvas left " + canvas.offsetLeft);
+                console.log("canvas right " + canvas.offsetTop);
+                console.log("x " + x);
+                console.log("y " + y);
+                if (e.pageX < x + 20 + canvas.offsetLeft && e.pageX > x - 20 +
+                        canvas.offsetLeft && e.pageY < y + 20 + canvas.offsetTop &&
+                        e.pageY > y - 20 + canvas.offsetTop) {
+                    x = e.pageX - canvas.offsetLeft;
+                    y = e.pageY - canvas.offsetTop;
+                    console.log("new x " + x);
+                    console.log("new y " + y);
+                    dragok = true;
+                }
+                if (dragok) {
+                    canvas.onmousemove = mouseMove;
+                }
+            }
+
+            function mouseUp(e) {
+                dragok = false;
+                canvas.onmousemove = null;
+                canvas.removeEventListener("mousedown", mouseDown);
+                window.addEventListener("mouseup", mouseUp);
+
+                //code below prevents the mouse down from having an effect on the main browser window:
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+            }
+        </script>
+
+    </body>
+</html>
